@@ -37,7 +37,9 @@ namespace hpx_debug { namespace commands
         BOOST_FOREACH(std::string const& name, command_names)
         {
             boost::shared_ptr<command_base> c = ci_.command(name);
-            std::string help_string = c->do_help();
+            std::string help_string = c->do_help(
+                command_interpreter::helpmode_minimal);
+
             ci_.ostrm() << std::setw(max_length) << name
                 << " -- " << help_string << std::endl;
         }
@@ -48,7 +50,7 @@ namespace hpx_debug { namespace commands
         return false;
     }
 
-    std::string help::do_help() const
+    std::string help::do_help(command_interpreter::helpmode mode) const
     {
         return "give short list of commands";
     }

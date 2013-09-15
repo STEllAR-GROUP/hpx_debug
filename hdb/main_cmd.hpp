@@ -15,6 +15,10 @@ namespace hpx_debug
     public:
         main_cmd();
 
+        // Method called on an input line when the command prefix is not
+        // recognized
+        void default_command_handler(std::vector<std::string> const& args);
+
     private:
     };
 }

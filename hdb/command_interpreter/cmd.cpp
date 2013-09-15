@@ -39,10 +39,10 @@ namespace command_interpreter
                 boost::shared_ptr<char> line(::readline(prompt_.c_str()), &::free);
                 if (0 == line.get() || '\0' == line.get()[0])
                 {
-                    if (rl_done)
+                    if (rl_done && 0 == line.get())
                         done = true;
 
-                    if (!emptyline() || !last_command_.empty())
+                    if (!emptyline() && last_command_.empty())
                         continue;
 
                     // if not overridden, repeat last command
@@ -118,7 +118,7 @@ namespace command_interpreter
 
     void cmd::default_command_handler(std::vector<std::string> const& args)
     {
-        ostrm_ << "unknown command name: " << args[0];
+        ostrm_ << "unknown command name: " << args[0] << ". ";
     }
 
     void cmd::post_loop()

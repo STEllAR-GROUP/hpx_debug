@@ -12,12 +12,18 @@
 
 namespace command_interpreter
 {
+    enum helpmode
+    {
+        helpmode_minimal = 0,
+        helpmode_full = 1
+    };
+
     struct command_base
     {
         virtual ~command_base() {}
 
         virtual bool do_call(std::vector<std::string> const& args) = 0;
-        virtual std::string do_help() const = 0;
+        virtual std::string do_help(helpmode mode) const = 0;
     };
 }
 
