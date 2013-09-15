@@ -90,6 +90,6 @@ namespace hpx_debug
     void main_cmd::default_command_handler(std::vector<std::string> const& args)
     {
         cmd::default_command_handler(args);
-        ostrm() << "Try 'help' command";
+        ostrm() << "Try \"help\" command";
     }
 }

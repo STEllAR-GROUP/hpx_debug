@@ -12,9 +12,21 @@ namespace hpx_debug { namespace commands
         return true;        // stop executing the command interpreter loop
     }
 
-    std::string quit::do_help(command_interpreter::helpmode mode) const
+    std::string quit::do_help(command_interpreter::helpmode mode,
+        std::vector<std::string> const& args) const
     {
-        return "exit the debugger";
+        switch(mode) {
+        case command_interpreter::helpmode_minimal:
+            return "exit the debugger";
+
+        case command_interpreter::helpmode_command:
+            return "quit -- exit the debugger";
+
+        default:
+        case command_interpreter::helpmode_allcommands:
+            break;
+        }
+        return "";
     }
 }}
 

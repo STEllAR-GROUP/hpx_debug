@@ -18,7 +18,8 @@ namespace hpx_debug { namespace commands
         std::string get_command_name() const { return "quit"; }
 
         bool do_call(std::vector<std::string> const& args);
-        std::string do_help(command_interpreter::helpmode mode) const;
+        std::string do_help(command_interpreter::helpmode mode,
+            std::vector<std::string> const& args) const;
 
     private:
     };

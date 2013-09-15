@@ -7,6 +7,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -124,7 +125,10 @@ namespace command_interpreter
     bool cmd::one_command(std::string const& input)
     {
         try {
-            std::vector<std::string> args(1, input);
+            std::vector<std::string> args;
+            boost::algorithm::split(args, input, 
+                boost::algorithm::is_any_of(" \t"), 
+                boost::algorithm::token_compress_on); 
 
             if (!has_command(args[0])) {
                 default_command_handler(args);
@@ -132,11 +136,13 @@ namespace command_interpreter
             }
 
             // execute command
-            boost::shared_ptr<command_base> c = command(input);
+            boost::shared_ptr<command_base> c = command(args[0]);
             bool result = c->do_call(args);
 
             // store this command line in the history
-            ::add_history(input.c_str());
+            if (input != last_command_)
+                ::add_history(input.c_str());
+
             return result;
         }
         catch (std::runtime_error const& e) {
