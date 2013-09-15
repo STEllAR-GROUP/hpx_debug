@@ -22,6 +22,7 @@ namespace command_interpreter
     {
         virtual ~command_base() {}
 
+        virtual std::string get_command_name() const = 0;
         virtual bool do_call(std::vector<std::string> const& args) = 0;
         virtual std::string do_help(helpmode mode) const = 0;
     };

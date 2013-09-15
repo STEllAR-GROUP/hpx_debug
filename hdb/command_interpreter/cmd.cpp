@@ -11,12 +11,41 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#define CMD_HISTORY_LEN 100
+
 namespace command_interpreter
 {
     ///////////////////////////////////////////////////////////////////////////
-    cmd::cmd(std::string const& prompt, std::istream& istrm, std::ostream& ostrm)
-      : prompt_(prompt), istrm_(istrm), ostrm_(ostrm)
+    bool stop_cli_loop = false;
+
+    ///////////////////////////////////////////////////////////////////////////
+    void cmd::init_history()
     {
+        char const* env = std::getenv("HOME");
+        if (env)
+        {
+            history_ = std::string(env) + "/." + appname_ + ".rc";
+
+            ::using_history();
+            ::read_history(history_.c_str());
+        }
+    }
+
+
+    void cmd::close_history()
+    {
+        if (!history_.empty())
+        {
+            ::write_history(history_.c_str());
+            ::history_truncate_file(history_.c_str(), CMD_HISTORY_LEN);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    cmd::cmd(std::string const& appname, std::istream& istrm, std::ostream& ostrm)
+      : appname_(appname), istrm_(istrm), ostrm_(ostrm), done_(false)
+    {
+        stop_cli_loop = false;
     }
 
     cmd::~cmd()
@@ -24,24 +53,26 @@ namespace command_interpreter
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    int cmd::loop(std::string const& intro)
+    int cmd::loop(std::string const& prompt, std::string const& intro)
     {
-        ostrm_ << intro;
+        if (!intro.empty())
+            ostrm_ << intro;
 
         // hook for pre-loop operations
         pre_loop();
 
-        bool done = false;
-        while (!done)
+        done_ = false;
+        while (!done())
         {
             std::string input;
             {
-                boost::shared_ptr<char> line(::readline(prompt_.c_str()), &::free);
-                if (0 == line.get() || '\0' == line.get()[0])
+                boost::shared_ptr<char> line(::readline(prompt.c_str()), &::free);
+                if (0 == line.get())
                 {
-                    if (rl_done && 0 == line.get())
-                        done = true;
-
+                    break;
+                }
+                else if ('\0' == line.get()[0])
+                {
                     if (!emptyline() && last_command_.empty())
                         continue;
 
@@ -59,14 +90,11 @@ namespace command_interpreter
             // pre-command: optionally modify the input line
             input = pre_command(input);
 
-            // stre this command line in the history
-            ::add_history(input.c_str());
-
             // execute the command, returns whether to stop
-            done = one_command(input);
+            done_ = one_command(input);
 
             // post-command: optionally modify the done flag
-            done = post_command(input, done);
+            done_ = post_command(input, done_);
 
             last_command_ = input;            
         }
@@ -78,9 +106,10 @@ namespace command_interpreter
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    bool cmd::add_command(std::string const& name, 
-            boost::shared_ptr<command_base> command)
+    bool cmd::add_command(boost::shared_ptr<command_base> command)
     {
+        std::string name = command->get_command_name();
+
         command_infos_type::iterator it = commands_.find(name);
         if (it != commands_.end())
             return false;
@@ -99,12 +128,16 @@ namespace command_interpreter
 
             if (!has_command(args[0])) {
                 default_command_handler(args);
+                return false;
             }
-            else {
-                boost::shared_ptr<command_base> c = command(input);
 
-                return c->do_call(args);
-            }
+            // execute command
+            boost::shared_ptr<command_base> c = command(input);
+            bool result = c->do_call(args);
+
+            // store this command line in the history
+            ::add_history(input.c_str());
+            return result;
         }
         catch (std::runtime_error const& e) {
             ostrm_ << "caught exception: " << e.what();
@@ -121,8 +154,14 @@ namespace command_interpreter
         ostrm_ << "unknown command name: " << args[0] << ". ";
     }
 
+    void cmd::pre_loop()
+    {
+        init_history();
+    }
+
     void cmd::post_loop()
     {
+        close_history();
         ostrm_ << std::endl;
     }
 

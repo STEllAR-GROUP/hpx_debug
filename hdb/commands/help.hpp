@@ -16,6 +16,8 @@ namespace hpx_debug { namespace commands
     public:
         help(command_interpreter::cmd& ci) : ci_(ci) {}
 
+        std::string get_command_name() const { return "help"; }
+
         bool do_call(std::vector<std::string> const& args);
         std::string do_help(command_interpreter::helpmode mode) const;
 

@@ -19,6 +19,12 @@
 
 namespace command_interpreter
 {
+    ///////////////////////////////////////////////////////////////////////////
+    // global flag allowing to stop executing command loop
+    extern bool stop_cli_loop;
+        
+    ///////////////////////////////////////////////////////////////////////////
+    // Base class for generic CLI handler
     class cmd
     {
     private:
@@ -28,21 +34,24 @@ namespace command_interpreter
 
     public:
         ///////////////////////////////////////////////////////////////////////
-        cmd(std::string const& prompt, std::istream& istrm, 
+        cmd(std::string const& appname, std::istream& istrm, 
             std::ostream& ostrm);
 
         virtual ~cmd();
 
         ///////////////////////////////////////////////////////////////////////
         // do command line processing
-        int loop(std::string const& intro);
+        int loop(std::string const& prompt = "> ", std::string const& intro = "");
 
         // add a command to the interpreter
-        bool add_command(std::string const& name, 
-            boost::shared_ptr<command_base> command);
+        bool add_command(boost::shared_ptr<command_base> command);
+
+        // signal to stop executing loop
+        void stop() { done_ = true; }
+        bool done() const { return done_ || stop_cli_loop; }
 
         ///////////////////////////////////////////////////////////////////////
-        virtual void pre_loop() {}
+        virtual void pre_loop();
         virtual void post_loop();
 
         // called when imput line was empty
@@ -80,14 +89,20 @@ namespace command_interpreter
         std::istream& istrm() { return istrm_; }
         std::ostream& ostrm() { return ostrm_; }
 
+    protected:
+        void init_history();
+        void close_history();
+
     private:
-        std::string prompt_;
+        std::string appname_;
         std::istream& istrm_;
         std::ostream& ostrm_;
 
         command_infos_type commands_;
 
         std::string last_command_;      // last successfully executed command
+        std::string history_;           // file name for history information
+        bool done_;                     // break command loop
     };
 }
 

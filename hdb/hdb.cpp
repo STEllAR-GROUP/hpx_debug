@@ -5,11 +5,13 @@
 
 #include "main_cmd.hpp"
 
+char const* const hdb_prompt = "hdb> ";
+
 int main(int argc, char* argv[])
 {
-    hpx_debug::main_cmd cmd;
     char const* const greating = 
         "Debug HPX applications. Try 'help' for more information\n";
 
-    return cmd.loop(greating);
+    hpx_debug::main_cmd cmd;
+    return cmd.loop(hdb_prompt, greating);
 }
