@@ -64,11 +64,18 @@ namespace command_interpreter
             return stop;
         }
 
+        // Interpret the argument as though it had been typed in response
+        // to the prompt
         virtual bool one_command(std::string const& input);
+
+        // Method called on an input line when the command prefix is not
+        // recognized
+        virtual void default_command_handler(std::vector<std::string> const& args);
 
         ///////////////////////////////////////////////////////////////////////
         std::vector<std::string> commands() const;
         boost::shared_ptr<command_base> command(std::string const& name) const;
+        bool has_command(std::string const& name) const;
 
         std::istream& istrm() { return istrm_; }
         std::ostream& ostrm() { return ostrm_; }

@@ -95,10 +95,16 @@ namespace command_interpreter
     bool cmd::one_command(std::string const& input)
     {
         try {
-            boost::shared_ptr<command_base> c = command(input);
-
             std::vector<std::string> args(1, input);
-            return c->do_call(args);
+
+            if (!has_command(args[0])) {
+                default_command_handler(args);
+            }
+            else {
+                boost::shared_ptr<command_base> c = command(input);
+
+                return c->do_call(args);
+            }
         }
         catch (std::runtime_error const& e) {
             ostrm_ << "caught exception: " << e.what();
@@ -108,6 +114,11 @@ namespace command_interpreter
         }
         ostrm_ << std::endl;
         return false;
+    }
+
+    void cmd::default_command_handler(std::vector<std::string> const& args)
+    {
+        ostrm_ << "unknown command name: " << args[0];
     }
 
     void cmd::post_loop()
@@ -139,5 +150,11 @@ namespace command_interpreter
             throw std::runtime_error("unknown command name: " + name);
         }
         return (*it).second;
+    }
+
+    bool cmd::has_command(std::string const& name) const
+    {
+        command_infos_type::const_iterator it = commands_.find(name);
+        return (it != commands_.end()) ? true : false;
     }
 }

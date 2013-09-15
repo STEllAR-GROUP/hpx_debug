@@ -39,7 +39,7 @@ namespace hpx_debug { namespace commands
             boost::shared_ptr<command_base> c = ci_.command(name);
             std::string help_string = c->do_help();
             ci_.ostrm() << std::setw(max_length) << name
-                << " - " << help_string << std::endl;
+                << " -- " << help_string << std::endl;
         }
 
         ci_.ostrm() << "\nType \"help\" followed by a command name for "
