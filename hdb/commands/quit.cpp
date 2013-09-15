@@ -7,9 +7,14 @@
 
 namespace hpx_debug { namespace commands
 {
-    bool quit::call(std::vector<std::string> const& args)
+    bool quit::do_call(std::vector<std::string> const& args)
     {
         return true;        // stop executing the command interpreter loop
+    }
+
+    std::string quit::do_help() const
+    {
+        return "exit the debugger";
     }
 }}
 

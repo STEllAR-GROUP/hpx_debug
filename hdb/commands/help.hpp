@@ -3,22 +3,24 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(HPX_DEBUG_QUIT_CMD_SEP_14_2013_0637PM)
-#define HPX_DEBUG_QUIT_CMD_SEP_14_2013_0637PM
+#if !defined(HPX_DEBUG_HELP_CMD_SEP_15_2013_0833AM)
+#define HPX_DEBUG_HELP_CMD_SEP_15_2013_0833AM
 
+#include <command_interpreter/cmd.hpp>
 #include <command_interpreter/command_base.hpp>
 
 namespace hpx_debug { namespace commands
 {
-    class quit : public command_interpreter::command_base
+    class help : public command_interpreter::command_base
     {
     public:
-        quit() {}
+        help(command_interpreter::cmd& ci) : ci_(ci) {}
 
         bool do_call(std::vector<std::string> const& args);
         std::string do_help() const;
 
     private:
+        command_interpreter::cmd& ci_;
     };
 }}
 

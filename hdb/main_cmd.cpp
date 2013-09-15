@@ -6,20 +6,23 @@
 #include <hpx/hpx.hpp>
 
 #include "main_cmd.hpp"
+
+#include "commands/help.hpp"
 #include "commands/quit.hpp"
 
 #include <iostream>
 
 namespace hpx_debug
 {
+    ///////////////////////////////////////////////////////////////////////////
     char const* const hdb_prompt = "hdb> ";
 
     ///////////////////////////////////////////////////////////////////////////
     main_cmd::main_cmd()
       : cmd(hdb_prompt, std::cin, std::cout)
     {
-        add_command("quit", boost::make_shared<commands::quit>(), 
-            "quit the debugger");
+        add_command("help", boost::make_shared<commands::help>(boost::ref(*this)));
+        add_command("quit", boost::make_shared<commands::quit>());
     }
 
     ///////////////////////////////////////////////////////////////////////////

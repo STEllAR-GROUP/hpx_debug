@@ -19,6 +19,10 @@ namespace command_interpreter
     {
     }
 
+    cmd::~cmd()
+    {
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     int cmd::loop(std::string const& intro)
     {
@@ -35,6 +39,9 @@ namespace command_interpreter
                 boost::shared_ptr<char> line(::readline(prompt_.c_str()), &::free);
                 if (0 == line.get() || '\0' == line.get()[0])
                 {
+                    if (rl_done)
+                        done = true;
+
                     if (!emptyline() || !last_command_.empty())
                         continue;
 
@@ -72,8 +79,7 @@ namespace command_interpreter
 
     ///////////////////////////////////////////////////////////////////////////
     bool cmd::add_command(std::string const& name, 
-            boost::shared_ptr<command_base> command,
-            std::string const& help)
+            boost::shared_ptr<command_base> command)
     {
         command_infos_type::iterator it = commands_.find(name);
         if (it != commands_.end())
@@ -81,14 +87,57 @@ namespace command_interpreter
 
         std::pair<command_infos_type::iterator, bool> p =
             commands_.insert(command_infos_type::value_type(
-                name, command_info_type(command, boost::move(help)))
-            );
+                name, command));
         return p.second;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     bool cmd::one_command(std::string const& input)
     {
+        try {
+            boost::shared_ptr<command_base> c = command(input);
+
+            std::vector<std::string> args(1, input);
+            return c->do_call(args);
+        }
+        catch (std::runtime_error const& e) {
+            ostrm_ << "caught exception: " << e.what();
+        }
+        catch (...) {
+            ostrm_ << "caught unexpected exception";
+        }
+        ostrm_ << std::endl;
         return false;
+    }
+
+    void cmd::post_loop()
+    {
+        ostrm_ << std::endl;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    std::vector<std::string> cmd::commands() const
+    {
+        std::vector<std::string> command_names;
+        command_names.reserve(commands_.size());
+
+        command_infos_type::const_iterator end = commands_.end();
+        for (command_infos_type::const_iterator it = commands_.begin(); 
+             it != end; ++it)
+        {
+            command_names.push_back((*it).first);
+        }
+
+        return command_names;
+    }
+
+    boost::shared_ptr<command_base> cmd::command(std::string const& name) const
+    {
+        command_infos_type::const_iterator it = commands_.find(name);
+        if (it == commands_.end())
+        {
+            throw std::runtime_error("unknown command name: " + name);
+        }
+        return (*it).second;
     }
 }

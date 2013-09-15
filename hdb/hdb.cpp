@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
     hpx_debug::main_cmd cmd;
     char const* const greating = 
-        "Debug HPX applications. Try 'help' for more information";
+        "Debug HPX applications. Try 'help' for more information\n";
 
     return cmd.loop(greating);
 }

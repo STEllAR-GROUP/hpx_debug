@@ -6,6 +6,7 @@
 #if !defined(HPX_DEBUG_COMMAND_BASE_SEP_14_2013_0748PM)
 #define HPX_DEBUG_COMMAND_BASE_SEP_14_2013_0748PM
 
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -15,10 +16,8 @@ namespace command_interpreter
     {
         virtual ~command_base() {}
 
-        virtual bool call(std::vector<std::string> const& args)
-        {
-            return false;
-        }
+        virtual bool do_call(std::vector<std::string> const& args) = 0;
+        virtual std::string do_help() const = 0;
     };
 }
 
