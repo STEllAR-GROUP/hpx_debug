@@ -49,6 +49,8 @@ namespace hpx_debug { namespace commands
     bool connect::do_call(std::vector<std::string> const& args)
     {
         std::vector<std::string> cfg;
+        cfg.push_back("hpx.components.load_external!=0");   // don't load external components
+        cfg.push_back("hpx.run_hpx_main!=0");               // don't run hpx_main
 
         if (args.size() > 1)
         {
