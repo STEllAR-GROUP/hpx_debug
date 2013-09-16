@@ -5,14 +5,15 @@
 
 #include "cmd.hpp"
 
-#include <boost/shared_ptr.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include <readline/readline.h>
-#include <readline/history.h>
+#if defined(HDB_HAVE_READLINE)
+#  include <readline/readline.h>
+#  include <readline/history.h>
 
-#define CMD_HISTORY_LEN 100
+#  define HDB_COMMAND_HISTORY_LEN 100
+#endif
 
 namespace command_interpreter
 {
@@ -22,24 +23,26 @@ namespace command_interpreter
     ///////////////////////////////////////////////////////////////////////////
     void cmd::init_history()
     {
+#if defined(HDB_HAVE_READLINE)
         char const* env = std::getenv("HOME");
-        if (env)
-        {
-            history_ = std::string(env) + "/." + appname_ + ".rc";
+        if (!env) return;
 
-            ::using_history();
-            ::read_history(history_.c_str());
-        }
+        history_ = std::string(env) + "/." + appname_ + ".rc";
+
+        ::using_history();
+        ::read_history(history_.c_str());
+#endif
     }
 
 
     void cmd::close_history()
     {
-        if (!history_.empty())
-        {
-            ::write_history(history_.c_str());
-            ::history_truncate_file(history_.c_str(), CMD_HISTORY_LEN);
-        }
+#if defined(HDB_HAVE_READLINE)
+        if (history_.empty()) return;
+
+        ::write_history(history_.c_str());
+        ::history_truncate_file(history_.c_str(), HDB_COMMAND_HISTORY_LEN);
+#endif
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -56,6 +59,8 @@ namespace command_interpreter
     ///////////////////////////////////////////////////////////////////////////
     int cmd::loop(std::string const& prompt, std::string const& intro)
     {
+        prompt_ = prompt;
+
         if (!intro.empty())
             ostrm_ << intro;
 
@@ -67,7 +72,8 @@ namespace command_interpreter
         {
             std::string input;
             {
-                boost::shared_ptr<char> line(::readline(prompt.c_str()), &::free);
+#if defined(HDB_HAVE_READLINE)
+                boost::shared_ptr<char> line(::readline(prompt_.c_str()), &::free);
                 if (0 == line.get())
                 {
                     break;
@@ -84,6 +90,21 @@ namespace command_interpreter
                 {
                     input = line.get();
                 }
+#else
+                ostrm_ << prompt << std::flush;
+                if (!std::getline(istrm_, input))
+                {
+                    break;
+                }
+                else if (input.empty())
+                {
+                    if (!emptyline() && last_command_.empty())
+                        continue;
+
+                    // if not overridden, repeat last command
+                    input = last_command_;
+                }
+#endif
             }
 
             boost::algorithm::trim(input);
@@ -136,9 +157,11 @@ namespace command_interpreter
             boost::shared_ptr<command_base> c = command(args[0]);
             bool result = c->do_call(args);
 
+#if defined(HDB_HAVE_READLINE)
             // store this command line in the history
             if (inp != last_command_)
                 ::add_history(inp.c_str());
+#endif
 
             return post_command(inp, result);
         }

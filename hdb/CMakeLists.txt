@@ -7,9 +7,13 @@
 
 include_directories(${HPX_debug_SOURCE_DIR}/hdb)
 
+if(READLINE_FOUND)
+  hpx_add_definitions(-DHDB_HAVE_READLINE)
+endif()
+
 add_hpx_executable(hdb
-    AUTOGLOB
-    HEADER_GLOB "*.h*"
-    SOURCE_GLOB "*.c*"
-    FOLDER "hdb/hdb"
-    DEPENDENCIES ${READLINE_LIBRARY})
+  AUTOGLOB
+  HEADER_GLOB "*.h*"
+  SOURCE_GLOB "*.c*"
+  FOLDER "hdb/hdb"
+  DEPENDENCIES ${READLINE_LIBRARY})

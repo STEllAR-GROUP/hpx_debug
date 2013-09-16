@@ -6,17 +6,73 @@
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_start.hpp>
 
+#include <hpx_cmd.hpp>
+
 #include "connect.hpp"
+
+#include <boost/lexical_cast.hpp>
 
 namespace hpx_debug { namespace commands
 {
+    ///////////////////////////////////////////////////////////////////////
+    // Addresses are supposed to have the format <hostname>[:port]
+    bool split_ip_address(std::string const& v, std::string& host,
+        boost::uint16_t& port)
+    {
+        std::string::size_type p = v.find_first_of(":");
+
+        std::string tmp_host;
+        boost::uint16_t tmp_port = 0;
+
+        try {
+            if (p != std::string::npos) {
+                tmp_host = v.substr(0, p);
+                tmp_port = boost::lexical_cast<boost::uint16_t>(v.substr(p+1));
+            }
+            else {
+                tmp_host = v;
+            }
+
+            if (!tmp_host.empty()) {
+                host = tmp_host;
+                if (tmp_port)
+                    port = tmp_port;
+            }
+        }
+        catch (boost::bad_lexical_cast const& /*e*/) {
+            // port number is invalid
+            return false;
+        }
+        return true;
+    }
+
     bool connect::do_call(std::vector<std::string> const& args)
     {
         std::vector<std::string> cfg;
 
+        if (args.size() > 1)
+        {
+            std::string address = HPX_INITIAL_IP_ADDRESS;
+            boost::uint16_t port = HPX_INITIAL_IP_PORT;
+
+            if (!split_ip_address(args[1], address, port)) 
+            {
+                throw std::runtime_error(
+                    "couldn't interpret locality address: " + args[1]); 
+            }
+
+            cfg.push_back("hpx.agas.address!=" + address);
+            cfg.push_back("hpx.agas.port!=" +
+                boost::lexical_cast<std::string>(port));
+        }
+
         hpx::start(cfg, hpx::runtime_mode_connect);
 
-        return false;
+        hpx_cmd cmd(ci_.get_appname());
+        cmd.loop(ci_.get_prompt());
+
+        hpx::disconnect();
+        return true;
     }
 
     std::string connect::do_help(command_interpreter::helpmode mode,
@@ -27,7 +83,9 @@ namespace hpx_debug { namespace commands
             return "connect to a running HPX application";
 
         case command_interpreter::helpmode_command:
-            return "connect <locality> -- connect to an HPX application running on <locality>";
+            return "connect [<locality>] -- connect to an HPX application running on <locality>\n"
+                   "                        where <locality> is hostname[:port] or ipaddress[:port]\n"
+                   "                        (default: 127.0.0.1:7910)";
 
         default:
         case command_interpreter::helpmode_allcommands:

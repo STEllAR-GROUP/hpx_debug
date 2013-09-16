@@ -19,9 +19,6 @@ namespace hpx_debug
         // recognized
         void default_command_handler(std::vector<std::string> const& args);
 
-        // Hook method executed just after a command dispatch is finished
-        bool post_command(std::string const& input, bool stop);
-
     private:
     };
 }

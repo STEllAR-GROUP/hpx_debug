@@ -48,7 +48,7 @@ namespace hpx_debug { namespace commands
                     << name << " -- " << help_string << std::endl;
             }
 
-            ci_.ostrm() << "\nType \"help\" followed by a command name for "
+            ci_.ostrm() << "\nType 'help' followed by a command name for "
                 << "full documentation of that command." << std::endl;
         }
         else {
@@ -72,10 +72,12 @@ namespace hpx_debug { namespace commands
     {
         switch(mode) {
         case command_interpreter::helpmode_minimal:
-            return "give short list of commands";
+            return "give short list of all commands";
     
         case command_interpreter::helpmode_command:
-            return "help <command> -- give short help for given command";
+            return "help [<command>] -- give short help for given <command>\n"
+                   "                    where <command> is either 'all' or one of the available\n"
+                   "                    commands (default: give short list of all commands)";
 
         default:
         case command_interpreter::helpmode_allcommands:

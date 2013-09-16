@@ -31,12 +31,10 @@ link_directories(${HPX_LIBRARY_DIR})
 
 # Other libraries
 find_package(HPX_Readline)
-if(NOT READLINE_FOUND)
-  hpx_error("hpx_debug" "Could not find readline library")
+if(READLINE_FOUND)
+  include_directories(${READLINE_INCLUDE_DIR})
+  link_directories(${READLINE_LIBRARY_DIR})
 endif()
-
-include_directories(${READLINE_INCLUDE_DIR})
-link_directories(${READLINE_LIBRARY_DIR})
 
 # Adjust auxiliary build settings for HPX to work properly
 if(NOT MSVC)

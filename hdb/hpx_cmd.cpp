@@ -33,13 +33,6 @@ namespace hpx_debug
     void hpx_cmd::default_command_handler(std::vector<std::string> const& args)
     {
         cmd::default_command_handler(args);
-        ostrm() << "Try \"help\" command";
-    }
-
-    bool hpx_cmd::post_command(std::string const& input, bool stop)
-    {
-        if (stop)
-            hpx::disconnect();
-        return stop;
+        ostrm() << "Try 'help' command";
     }
 }

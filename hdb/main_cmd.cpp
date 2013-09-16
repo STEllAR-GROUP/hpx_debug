@@ -14,7 +14,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
-#include <readline/readline.h>
+#if defined(HDB_HAVE_READLINE)
+#  include <readline/readline.h>
+#endif
 
 #if !defined(BOOST_WINDOWS)
 #  include <signal.h>
@@ -80,8 +82,10 @@ namespace hpx_debug
         // initialize signal handlers
         set_error_handlers();
 
+#if defined(HDB_HAVE_READLINE)
         // Allow conditional parsing of the ~/.inputrc file.
         rl_readline_name = hdb_name;
+#endif
 
         // add all known commands
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));
@@ -93,6 +97,6 @@ namespace hpx_debug
     void main_cmd::default_command_handler(std::vector<std::string> const& args)
     {
         cmd::default_command_handler(args);
-        ostrm() << "Try \"help\" command";
+        ostrm() << "Try 'help' command";
     }
 }

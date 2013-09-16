@@ -9,7 +9,7 @@ namespace hpx_debug { namespace commands
 {
     bool disconnect::do_call(std::vector<std::string> const& args)
     {
-        // hpx::disconnect() is called in the post_cmd hook
+        // hpx::disconnect() is called in the connect command implementation
         return true;
     }
 

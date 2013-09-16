@@ -89,19 +89,26 @@ namespace command_interpreter
         std::istream& istrm() { return istrm_; }
         std::ostream& ostrm() { return ostrm_; }
 
+        std::string const& get_appname() const { return appname_; }
+        std::string const& get_prompt() const { return prompt_; }
+
     protected:
         void init_history();
         void close_history();
 
     private:
         std::string appname_;
+        std::string prompt_;
+
         std::istream& istrm_;
         std::ostream& ostrm_;
 
         command_infos_type commands_;
 
         std::string last_command_;      // last successfully executed command
+#if defined(HDB_HAVE_READLINE)
         std::string history_;           // file name for history information
+#endif
         bool done_;                     // break command loop
     };
 }
