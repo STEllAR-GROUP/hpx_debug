@@ -88,14 +88,8 @@ namespace command_interpreter
 
             boost::algorithm::trim(input);
             
-            // pre-command: optionally modify the input line
-            input = pre_command(input);
-
             // execute the command, returns whether to stop
             done_ = one_command(input);
-
-            // post-command: optionally modify the done flag
-            done_ = post_command(input, done_);
 
             last_command_ = input;            
         }
@@ -124,15 +118,18 @@ namespace command_interpreter
     ///////////////////////////////////////////////////////////////////////////
     bool cmd::one_command(std::string const& input)
     {
+        // pre-command: optionally modify the input line
+        std::string inp(pre_command(input));
+
         try {
             std::vector<std::string> args;
-            boost::algorithm::split(args, input, 
+            boost::algorithm::split(args, inp, 
                 boost::algorithm::is_any_of(" \t"), 
                 boost::algorithm::token_compress_on); 
 
             if (!has_command(args[0])) {
                 default_command_handler(args);
-                return false;
+                return post_command(inp, false);
             }
 
             // execute command
@@ -140,10 +137,10 @@ namespace command_interpreter
             bool result = c->do_call(args);
 
             // store this command line in the history
-            if (input != last_command_)
-                ::add_history(input.c_str());
+            if (inp != last_command_)
+                ::add_history(inp.c_str());
 
-            return result;
+            return post_command(inp, result);
         }
         catch (std::runtime_error const& e) {
             ostrm_ << "caught exception: " << e.what();
@@ -151,8 +148,9 @@ namespace command_interpreter
         catch (...) {
             ostrm_ << "caught unexpected exception";
         }
+
         ostrm_ << std::endl;
-        return false;
+        return post_command(inp, false);
     }
 
     void cmd::default_command_handler(std::vector<std::string> const& args)

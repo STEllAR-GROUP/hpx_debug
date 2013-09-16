@@ -44,8 +44,8 @@ namespace hpx_debug { namespace commands
                 std::string help_string = c->do_help(
                     command_interpreter::helpmode_minimal, args);
 
-                ci_.ostrm() << std::setw(max_length) << name
-                    << " -- " << help_string << std::endl;
+                ci_.ostrm() << std::left << std::setw(max_length) 
+                    << name << " -- " << help_string << std::endl;
             }
 
             ci_.ostrm() << "\nType \"help\" followed by a command name for "

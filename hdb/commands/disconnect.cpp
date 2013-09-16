@@ -3,26 +3,25 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <command_interpreter/cmd.hpp>
-#include "quit.hpp"
+#include "disconnect.hpp"
 
 namespace hpx_debug { namespace commands
 {
-    bool quit::do_call(std::vector<std::string> const& args)
+    bool disconnect::do_call(std::vector<std::string> const& args)
     {
-        command_interpreter::stop_cli_loop = true;
-        return true;        // stop executing the command interpreter loop
+        // hpx::disconnect() is called in the post_cmd hook
+        return true;
     }
 
-    std::string quit::do_help(command_interpreter::helpmode mode,
+    std::string disconnect::do_help(command_interpreter::helpmode mode,
         std::vector<std::string> const& args) const
     {
         switch(mode) {
         case command_interpreter::helpmode_minimal:
-            return "exit the debugger";
+            return "disconnect from the HPX application";
 
         case command_interpreter::helpmode_command:
-            return "quit -- exit the debugger";
+            return "disconnect -- disconnect from the HPX application";
 
         default:
         case command_interpreter::helpmode_allcommands:

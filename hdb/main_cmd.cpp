@@ -3,14 +3,16 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <hpx/hpx.hpp>
-
 #include "main_cmd.hpp"
 
 #include "commands/help.hpp"
 #include "commands/quit.hpp"
+#include "commands/connect.hpp"
 
 #include <iostream>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 #include <readline/readline.h>
 
@@ -84,6 +86,7 @@ namespace hpx_debug
         // add all known commands
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));
         add_command(boost::make_shared<commands::quit>());
+        add_command(boost::make_shared<commands::connect>(boost::ref(*this)));
     }
 
     ///////////////////////////////////////////////////////////////////////////
