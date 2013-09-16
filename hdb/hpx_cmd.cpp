@@ -8,10 +8,10 @@
 
 #include "hpx_cmd.hpp"
 
-#include "commands/help.hpp"
-#include "commands/disconnect.hpp"
-#include "commands/quit.hpp"
-#include "commands/license.hpp"
+#include <commands/help.hpp>
+#include <commands/disconnect.hpp>
+#include <commands/quit.hpp>
+#include <commands/license.hpp>
 
 #include <iostream>
 

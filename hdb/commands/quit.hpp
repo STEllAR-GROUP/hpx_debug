@@ -6,6 +6,7 @@
 #if !defined(HPX_DEBUG_QUIT_CMD_SEP_14_2013_0637PM)
 #define HPX_DEBUG_QUIT_CMD_SEP_14_2013_0637PM
 
+#include <config.hpp>
 #include <command_interpreter/command_base.hpp>
 
 namespace hpx_debug { namespace commands

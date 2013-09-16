@@ -6,6 +6,8 @@
 #if !defined(HPX_DEBUG_LICENSE_CMD_SEP_15_2013_0844PM)
 #define HPX_DEBUG_LICENSE_CMD_SEP_15_2013_0844PM
 
+#include <config.hpp>
+#include <command_interpreter/cmd.hpp>
 #include <command_interpreter/command_base.hpp>
 
 namespace hpx_debug { namespace commands

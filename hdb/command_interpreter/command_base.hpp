@@ -6,7 +6,6 @@
 #if !defined(HPX_DEBUG_COMMAND_BASE_SEP_14_2013_0748PM)
 #define HPX_DEBUG_COMMAND_BASE_SEP_14_2013_0748PM
 
-#include <iosfwd>
 #include <string>
 #include <vector>
 

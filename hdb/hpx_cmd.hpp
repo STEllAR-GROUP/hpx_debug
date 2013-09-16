@@ -3,7 +3,8 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include "command_interpreter/cmd.hpp"
+#include <config.hpp>
+#include <command_interpreter/cmd.hpp>
 
 #if !defined(HPX_DEBUG_HPX_CMD_SEP_15_2013_0358PM)
 #define HPX_DEBUG_HPX_CMD_SEP_15_2013_0358PM

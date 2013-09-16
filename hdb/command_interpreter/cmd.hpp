@@ -3,6 +3,7 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#include <config.hpp>
 #include <command_interpreter/command_base.hpp>
 
 #include <iosfwd>
@@ -22,7 +23,7 @@ namespace command_interpreter
     ///////////////////////////////////////////////////////////////////////////
     // global flag allowing to stop executing command loop
     extern bool stop_cli_loop;
-        
+
     ///////////////////////////////////////////////////////////////////////////
     // Base class for generic CLI handler
     class cmd
@@ -34,7 +35,7 @@ namespace command_interpreter
 
     public:
         ///////////////////////////////////////////////////////////////////////
-        cmd(std::string const& appname, std::istream& istrm, 
+        cmd(std::string const& appname, std::istream& istrm,
             std::ostream& ostrm);
 
         virtual ~cmd();

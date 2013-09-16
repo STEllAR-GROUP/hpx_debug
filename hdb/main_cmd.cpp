@@ -3,12 +3,12 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include "main_cmd.hpp"
+#include <main_cmd.hpp>
 
-#include "commands/help.hpp"
-#include "commands/quit.hpp"
-#include "commands/connect.hpp"
-#include "commands/license.hpp"
+#include <commands/help.hpp>
+#include <commands/quit.hpp>
+#include <commands/connect.hpp>
+#include <commands/license.hpp>
 
 #include <iostream>
 
@@ -23,6 +23,8 @@
 #  include <signal.h>
 #  include <stdlib.h>
 #  include <string.h>
+#else
+#  include <windows.h>
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
