@@ -11,6 +11,7 @@
 #include "commands/help.hpp"
 #include "commands/disconnect.hpp"
 #include "commands/quit.hpp"
+#include "commands/license.hpp"
 
 #include <iostream>
 
@@ -27,6 +28,7 @@ namespace hpx_debug
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));
         add_command(boost::make_shared<commands::disconnect>());
         add_command(boost::make_shared<commands::quit>());
+        add_command(boost::make_shared<commands::license>(boost::ref(*this)));
     }
 
     ///////////////////////////////////////////////////////////////////////////

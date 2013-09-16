@@ -8,6 +8,7 @@
 #include "commands/help.hpp"
 #include "commands/quit.hpp"
 #include "commands/connect.hpp"
+#include "commands/license.hpp"
 
 #include <iostream>
 
@@ -91,6 +92,7 @@ namespace hpx_debug
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));
         add_command(boost::make_shared<commands::quit>());
         add_command(boost::make_shared<commands::connect>(boost::ref(*this)));
+        add_command(boost::make_shared<commands::license>(boost::ref(*this)));
     }
 
     ///////////////////////////////////////////////////////////////////////////
