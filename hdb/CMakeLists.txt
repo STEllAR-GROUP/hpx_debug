@@ -18,4 +18,5 @@ add_hpx_executable(hdb
   HEADER_GLOB "*.h*"
   SOURCE_GLOB "*.c*"
   FOLDER "hdb/hdb"
-  DEPENDENCIES ${dependencies})
+  DEPENDENCIES ${dependencies}
+  COMPONENT_DEPENDENCIES hdb_component)

@@ -48,5 +48,6 @@ else()
   endif()
 endif()
 
+add_subdirectory(hdb_component)
 add_subdirectory(hdb)
 
