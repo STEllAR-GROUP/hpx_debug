@@ -86,7 +86,7 @@ namespace command_interpreter
                     // if not overridden, repeat last command
                     input = last_command_;
                 }
-                else 
+                else
                 {
                     input = line.get();
                 }
@@ -108,11 +108,11 @@ namespace command_interpreter
             }
 
             boost::algorithm::trim(input);
-            
+
             // execute the command, returns whether to stop
             done_ = one_command(input);
 
-            last_command_ = input;            
+            last_command_ = input;
         }
 
         // hook for post-loop operations
@@ -144,9 +144,9 @@ namespace command_interpreter
 
         try {
             std::vector<std::string> args;
-            boost::algorithm::split(args, inp, 
-                boost::algorithm::is_any_of(" \t"), 
-                boost::algorithm::token_compress_on); 
+            boost::algorithm::split(args, inp,
+                boost::algorithm::is_any_of(" \t"),
+                boost::algorithm::token_compress_on);
 
             if (!has_command(args[0])) {
                 default_command_handler(args);
@@ -199,7 +199,7 @@ namespace command_interpreter
         command_names.reserve(commands_.size());
 
         command_infos_type::const_iterator end = commands_.end();
-        for (command_infos_type::const_iterator it = commands_.begin(); 
+        for (command_infos_type::const_iterator it = commands_.begin();
              it != end; ++it)
         {
             command_names.push_back((*it).first);

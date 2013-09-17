@@ -27,7 +27,10 @@ namespace hdb_debug { namespace util
             typedef std::char_traits<char> traits_type;
 
             if (n <= 0)
+            {
                 p->set_value(0);
+                return;
+            }
 
             char ch = istrm_.rdbuf()->sgetc();
             std::streamsize cnt = 0;
@@ -36,11 +39,15 @@ namespace hdb_debug { namespace util
             {
                 if (traits_type::eof() == ch)   // end of file, quit
                     break;
-                else if (--n <= 0)              // buffer full, quit
+
+                // got a character, add it to string
+                s[cnt] = ch;
+                ++cnt;
+
+                if (--n <= 0)
+                {
+                    istrm_.rdbuf()->sbumpc();
                     break;
-                else {                          // got a character, add it to string
-                    s[cnt] = ch;
-                    ++cnt;
                 }
             }
 
@@ -53,11 +60,8 @@ namespace hdb_debug { namespace util
             boost::shared_ptr<hpx::lcos::local::promise<std::streamsize> > p =
                 boost::make_shared<hpx::lcos::local::promise<std::streamsize> >();
 
-            // Get a reference to one of the IO specific HPX io_service objects ...
-            hpx::threads::executors::io_pool_executor scheduler;
-
             // ... and schedule the handler to run on one of its OS-threads.
-            scheduler.add(hpx::util::bind(&wrap_istream::do_async_read, this, s, n, p));
+            scheduler_.add(hpx::util::bind(&wrap_istream::do_async_read, this, s, n, p));
 
             return p->get_future();
         }
@@ -78,6 +82,7 @@ namespace hdb_debug { namespace util
 
     private:
         std::istream& istrm_;
+        hpx::threads::executors::io_pool_executor scheduler_;
     };
 }}
 
