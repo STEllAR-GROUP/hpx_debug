@@ -15,6 +15,7 @@
 
 #include <iostream>
 
+#include <boost/ref.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
@@ -22,7 +23,10 @@ namespace hpx_debug
 {
     ///////////////////////////////////////////////////////////////////////////
     hpx_cmd::hpx_cmd(std::string const& appname)
-      : cmd(appname, std::cin, std::cout)
+      : istrm_device_(std::cin),
+        istreamwrap_(istrm_device_, 1),         // set input buffer size to 1
+        ostreamwrap_(boost::ref(std::cout)),
+        cmd(appname, istreamwrap_, ostreamwrap_)
     {
         // add all known commands
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));

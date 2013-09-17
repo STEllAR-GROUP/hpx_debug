@@ -4,13 +4,24 @@
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <hpx/hpx.hpp>
-#include <hpx/hpx_start.hpp>
+#include <hpx/hpx_init.hpp>
 
 #include <hpx_cmd.hpp>
 
 #include "connect.hpp"
 
 #include <boost/lexical_cast.hpp>
+
+///////////////////////////////////////////////////////////////////////////
+int hpx_main(int argc, char* argv[])
+{
+    BOOST_ASSERT(argc == 3);
+
+    hpx_debug::hpx_cmd cmd(argv[1]);  // argv[1] holds application name
+    cmd.loop(argv[2]);                // argv[2] holds default prompt
+
+    return hpx::disconnect();
+}
 
 namespace hpx_debug { namespace commands
 {
@@ -50,17 +61,17 @@ namespace hpx_debug { namespace commands
     {
         std::vector<std::string> cfg;
         cfg.push_back("hpx.components.load_external!=0");   // don't load external components
-        cfg.push_back("hpx.run_hpx_main!=0");               // don't run hpx_main
+        cfg.push_back("hpx.run_hpx_main!=1");               // don't run hpx_main
 
         if (args.size() > 1)
         {
             std::string address = HPX_INITIAL_IP_ADDRESS;
             boost::uint16_t port = HPX_INITIAL_IP_PORT;
 
-            if (!split_ip_address(args[1], address, port)) 
+            if (!split_ip_address(args[1], address, port))
             {
                 throw std::runtime_error(
-                    "couldn't interpret locality address: " + args[1]); 
+                    "couldn't interpret locality address: " + args[1]);
             }
 
             cfg.push_back("hpx.agas.address!=" + address);
@@ -68,13 +79,21 @@ namespace hpx_debug { namespace commands
                 boost::lexical_cast<std::string>(port));
         }
 
-        hpx::start(cfg, hpx::runtime_mode_connect);
+        // launch HPX
+        using boost::program_options::options_description;
+        options_description desc_commandline(ci_.get_appname());
 
-        hpx_cmd cmd(ci_.get_appname());
-        cmd.loop(ci_.get_prompt());
+        char *dummy_argv[3] = {
+            const_cast<char*>(ci_.get_appname().c_str()),
+            const_cast<char*>(ci_.get_appname().c_str()),
+            const_cast<char*>(ci_.get_prompt().c_str())
+        };
+        HPX_STD_FUNCTION<void()> const empty;
 
-        hpx::disconnect();
-        return true;
+        hpx::init(desc_commandline, 3, dummy_argv, cfg, empty, empty,
+            hpx::runtime_mode_connect);
+
+        return false;
     }
 
     std::string connect::do_help(command_interpreter::helpmode mode,
