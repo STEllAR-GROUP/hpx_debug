@@ -6,9 +6,9 @@
 #if !defined(HPX_DEBUG_CONNECT_CMD_SEP_15_2013_0359PM)
 #define HPX_DEBUG_CONNECT_CMD_SEP_15_2013_0359PM
 
-#include <config.hpp>
-#include <command_interpreter/cmd.hpp>
-#include <command_interpreter/command_base.hpp>
+#include <hdb/config.hpp>
+#include <hdb/command_interpreter/cmd.hpp>
+#include <hdb/command_interpreter/command_base.hpp>
 
 namespace hpx_debug { namespace commands
 {

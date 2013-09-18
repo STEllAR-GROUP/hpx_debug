@@ -48,6 +48,8 @@ else()
   endif()
 endif()
 
+include_directories(${HPX_debug_SOURCE_DIR})
+
 add_subdirectory(hdb_component)
 add_subdirectory(hdb)
 

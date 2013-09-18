@@ -3,12 +3,12 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <main_cmd.hpp>
+#include <hdb/main_cmd.hpp>
 
-#include <commands/help.hpp>
-#include <commands/quit.hpp>
-#include <commands/connect.hpp>
-#include <commands/license.hpp>
+#include <hdb/commands/help.hpp>
+#include <hdb/commands/quit.hpp>
+#include <hdb/commands/connect.hpp>
+#include <hdb/commands/license.hpp>
 
 #include <iostream>
 
@@ -101,6 +101,7 @@ namespace hpx_debug
     void main_cmd::default_command_handler(std::vector<std::string> const& args)
     {
         cmd::default_command_handler(args);
-        ostrm() << "Try 'help' command";
+        ostrm() << "Try 'help' for more information." << std::endl;
     }
 }
+

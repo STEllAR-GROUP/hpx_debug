@@ -3,28 +3,26 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(HPX_DEBUG_LICENSE_CMD_SEP_15_2013_0844PM)
-#define HPX_DEBUG_LICENSE_CMD_SEP_15_2013_0844PM
+#if !defined(HPX_DEBUG_TERMINATE_CMD_SEP_18_2013_0822AM)
+#define HPX_DEBUG_TERMINATE_CMD_SEP_18_2013_0822AM
 
 #include <hdb/config.hpp>
-#include <hdb/command_interpreter/cmd.hpp>
 #include <hdb/command_interpreter/command_base.hpp>
 
 namespace hpx_debug { namespace commands
 {
-    class license : public command_interpreter::command_base
+    class terminate : public command_interpreter::command_base
     {
     public:
-        license(command_interpreter::cmd& ci) : ci_(ci) {}
+        terminate() {}
 
-        std::string get_command_name() const { return "license"; }
+        std::string get_command_name() const { return "terminate"; }
 
         bool do_call(std::vector<std::string> const& args);
         std::string do_help(command_interpreter::helpmode mode,
             std::vector<std::string> const& args) const;
 
     private:
-        command_interpreter::cmd& ci_;
     };
 }}
 

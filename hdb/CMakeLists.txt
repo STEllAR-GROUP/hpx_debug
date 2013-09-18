@@ -5,8 +5,6 @@
 
 # add hdb executable
 
-include_directories(${HPX_debug_SOURCE_DIR}/hdb)
-
 set(dependencies "")
 if(READLINE_FOUND)
   hpx_add_definitions(-DHDB_HAVE_READLINE)

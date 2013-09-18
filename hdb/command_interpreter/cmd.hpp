@@ -3,8 +3,8 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <config.hpp>
-#include <command_interpreter/command_base.hpp>
+#include <hdb/config.hpp>
+#include <hdb/command_interpreter/command_base.hpp>
 
 #include <iosfwd>
 #include <string>
@@ -28,12 +28,11 @@ namespace command_interpreter
     // Base class for generic CLI handler
     class cmd
     {
-    private:
+    public:
         ///////////////////////////////////////////////////////////////////////
         typedef std::map<std::string, boost::shared_ptr<command_base> >
             command_infos_type;
 
-    public:
         ///////////////////////////////////////////////////////////////////////
         cmd(std::string const& appname, std::istream& istrm,
             std::ostream& ostrm);
@@ -52,10 +51,13 @@ namespace command_interpreter
         bool done() const { return done_ || stop_cli_loop; }
 
         ///////////////////////////////////////////////////////////////////////
+        // Hook method executed once when loop() is called
         virtual void pre_loop();
+
+        // Hook method executed once when loop() is about to return
         virtual void post_loop();
 
-        // called when imput line was empty
+        // Hook method called when imput line was empty
         virtual bool emptyline()
         {
             return false;
@@ -96,6 +98,9 @@ namespace command_interpreter
     protected:
         void init_history();
         void close_history();
+
+        command_infos_type::const_iterator
+            find_command(std::string const& name) const;
 
     private:
         std::string appname_;

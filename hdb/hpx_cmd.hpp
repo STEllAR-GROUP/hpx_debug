@@ -3,10 +3,10 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <config.hpp>
-#include <command_interpreter/cmd.hpp>
-#include <util/wrap_istream.hpp>
-#include <util/wrap_ostream.hpp>
+#include <hdb/config.hpp>
+#include <hdb/command_interpreter/cmd.hpp>
+#include <hdb/util/wrap_istream.hpp>
+#include <hdb/util/wrap_ostream.hpp>
 
 #include <boost/iostreams/stream.hpp>
 
@@ -23,6 +23,12 @@ namespace hpx_debug
         // Method called on an input line when the command prefix is not
         // recognized
         void default_command_handler(std::vector<std::string> const& args);
+
+        // Hook method executed once when loop() is called
+        void pre_loop();
+
+    protected:
+        std::string connect_to_locality(boost::uint32_t lid);
 
     private:
         hdb_debug::util::wrap_istream istrm_device_;

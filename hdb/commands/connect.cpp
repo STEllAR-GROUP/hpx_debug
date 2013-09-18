@@ -6,9 +6,8 @@
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_init.hpp>
 
-#include <hpx_cmd.hpp>
-
-#include "connect.hpp"
+#include <hdb/hpx_cmd.hpp>
+#include <hdb/commands/connect.hpp>
 
 #include <boost/lexical_cast.hpp>
 

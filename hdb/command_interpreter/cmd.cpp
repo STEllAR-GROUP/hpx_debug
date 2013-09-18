@@ -3,7 +3,7 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <command_interpreter/cmd.hpp>
+#include <hdb/command_interpreter/cmd.hpp>
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -166,19 +166,18 @@ namespace command_interpreter
             return post_command(inp, result);
         }
         catch (std::runtime_error const& e) {
-            ostrm_ << "caught exception: " << e.what();
+            ostrm_ << "caught exception: " << e.what() << std::endl;
         }
         catch (...) {
-            ostrm_ << "caught unexpected exception";
+            ostrm_ << "caught unexpected exception" << std::endl;
         }
 
-        ostrm_ << std::endl;
         return post_command(inp, false);
     }
 
     void cmd::default_command_handler(std::vector<std::string> const& args)
     {
-        ostrm_ << "unknown command name: " << args[0] << ". ";
+        ostrm_ << "unknown command name: " << args[0] << "." << std::endl;
     }
 
     void cmd::pre_loop()
@@ -189,7 +188,6 @@ namespace command_interpreter
     void cmd::post_loop()
     {
         close_history();
-        ostrm_ << std::endl;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -208,19 +206,42 @@ namespace command_interpreter
         return command_names;
     }
 
+    // find a matching command if it's unambiguous
+    cmd::command_infos_type::const_iterator cmd::find_command(
+        std::string const& name) const
+    {
+        std::size_t cnt_matching = 0;
+
+        command_infos_type::const_iterator end = commands_.end();
+        command_infos_type::const_iterator entry_id = end;
+
+        for (command_infos_type::const_iterator it = commands_.lower_bound(name);
+             it != end; ++it)
+        {
+            if ((*it).first.find(name) == 0)
+            {
+                if (cnt_matching == 0)
+                    entry_id = it;
+                ++cnt_matching;
+            }
+        }
+
+        return cnt_matching == 1 ? entry_id : end;
+    }
+
     boost::shared_ptr<command_base> cmd::command(std::string const& name) const
     {
-        command_infos_type::const_iterator it = commands_.find(name);
+        command_infos_type::const_iterator it = find_command(name);
         if (it == commands_.end())
         {
-            throw std::runtime_error("unknown command name: " + name);
+            throw std::runtime_error("unknown or ambigous command name: " + name);
         }
         return (*it).second;
     }
 
     bool cmd::has_command(std::string const& name) const
     {
-        command_infos_type::const_iterator it = commands_.find(name);
+        command_infos_type::const_iterator it = find_command(name);
         return (it != commands_.end()) ? true : false;
     }
 }
