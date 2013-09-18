@@ -10,8 +10,12 @@
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
 
+#include <string>
+
+#include <boost/lexical_cast.hpp>
+
 ///////////////////////////////////////////////////////////////////////////////
-namespace hdb_debug { namespace server
+namespace hpx_debug { namespace server
 {
     // 
     class hdb_component
@@ -31,8 +35,12 @@ namespace hdb_debug { namespace server
 }}
 
 HPX_REGISTER_ACTION_DECLARATION(
-    hdb_debug::server::hdb_component::get_locality_name_action,
+    hpx_debug::server::hdb_component::get_locality_name_action,
     hdb_component_get_locality_name_action);
+
+HPX_REGISTER_ACTION_DECLARATION(
+    hpx::components::server::create_component_action0<hpx_debug::server::hdb_component>,
+    hdb_component_create_component_action);
 
 #endif
 

@@ -7,9 +7,9 @@
 #define HDB_COMPONENT_SEP_16_2013_0158PM
 
 #include <hpx/include/components.hpp>
-#include "server/hdb_component.hpp"
+#include <hdb_component/server/hdb_component.hpp>
 
-namespace hdb_debug
+namespace hpx_debug
 {
     /// Client for the \a server::simple_accumulator component.
     class hdb_component
@@ -29,6 +29,12 @@ namespace hdb_debug
         hdb_component(hpx::future<hpx::naming::id_type> const& gid)
           : base_type(gid)
         {}
+
+        std::string get_locality_name() const
+        {
+            server::hdb_component::get_locality_name_action act;
+            return act(get_gid());
+        }
     };
 }
 
