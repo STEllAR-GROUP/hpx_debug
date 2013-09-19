@@ -23,6 +23,13 @@ namespace command_interpreter
         virtual ~command_base() {}
 
         virtual std::string get_command_name() const = 0;
+
+        virtual bool pre_call(std::vector<std::string> const& args)
+        {
+            // by default, do no pre_call argument handling
+            return false;
+        }
+
         virtual bool do_call(std::vector<std::string> const& args) = 0;
         virtual std::string do_help(helpmode mode,
             std::vector<std::string> const& args) const = 0;

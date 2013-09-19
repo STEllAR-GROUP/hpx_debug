@@ -7,6 +7,7 @@
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/foreach.hpp>
 
 #if defined(HDB_HAVE_READLINE)
 #  include <readline/readline.h>
@@ -137,33 +138,68 @@ namespace command_interpreter
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    bool cmd::one_command(std::string const& input)
+    bool cmd::pre_command(std::vector<std::string>& args)
     {
-        // pre-command: optionally modify the input line
-        std::string inp(pre_command(input));
+        // find command based on (possibly abbreviated) input
+        return resolve_approximate_command(args[0]);
+    }
+
+    bool cmd:: post_command(std::vector<std::string> const& args, bool stop)
+    {
+        return stop;
+    }
+
+    bool cmd::one_command(std::string const& inp)
+    {
+        std::vector<std::string> args;
 
         try {
-            std::vector<std::string> args;
             boost::algorithm::split(args, inp,
                 boost::algorithm::is_any_of(" \t"),
                 boost::algorithm::token_compress_on);
 
-            if (!has_command(args[0])) {
+            // run all arguments by derived interpreter, resolve possibly
+            // abbreviated command
+            bool cmd_is_approx = pre_command(args);
+
+            // remove the command from arguments array
+            std::string resolved_command = args[0];
+            args.erase(args.begin());
+
+            // do default handling if the given command is not recognized
+            if (!has_command(resolved_command))
+            {
                 default_command_handler(args);
-                return post_command(inp, false);
+                return post_command(args, false);
+            }
+
+            // pre-command: optionally modify the input arguments, return
+            // whether modifications have been made
+            boost::shared_ptr<command_base> c = command(resolved_command);
+            cmd_is_approx |= c->pre_call(args);
+
+            // print full command if user specified something abbreviated
+            std::string input(inp);
+            if (cmd_is_approx)
+            {
+                input = resolved_command;
+                BOOST_FOREACH(std::string const& str, args)
+                {
+                    input += " " + str;
+                }
+                ostrm_ << input << std::endl;
             }
 
             // execute command
-            boost::shared_ptr<command_base> c = command(args[0]);
             bool result = c->do_call(args);
 
 #if defined(HDB_HAVE_READLINE)
             // store this command line in the history
-            if (inp != last_command_)
-                ::add_history(inp.c_str());
+            if (input != last_command_)
+                ::add_history(input.c_str());
 #endif
 
-            return post_command(inp, result);
+            return post_command(args, result);
         }
         catch (std::runtime_error const& e) {
             ostrm_ << "caught exception: " << e.what() << std::endl;
@@ -172,7 +208,7 @@ namespace command_interpreter
             ostrm_ << "caught unexpected exception" << std::endl;
         }
 
-        return post_command(inp, false);
+        return post_command(args, false);
     }
 
     void cmd::default_command_handler(std::vector<std::string> const& args)
@@ -239,9 +275,20 @@ namespace command_interpreter
         return (*it).second;
     }
 
-    bool cmd::has_command(std::string const& name) const
+    bool cmd::resolve_approximate_command(std::string& name) const
     {
         command_infos_type::const_iterator it = find_command(name);
+        if (it != commands_.end() && (*it).first != name)
+        {
+            name = (*it).first;
+            return true;
+        }
+        return false;
+    }
+
+    bool cmd::has_command(std::string const& name) const
+    {
+        command_infos_type::const_iterator it = commands_.find(name);
         return (it != commands_.end()) ? true : false;
     }
 }

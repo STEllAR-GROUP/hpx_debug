@@ -65,16 +65,10 @@ namespace command_interpreter
 
         // Hook method executed just before the command line 'input' is
         // interpreted
-        virtual std::string pre_command(std::string const& input)
-        {
-            return input;
-        }
+        virtual bool pre_command(std::vector<std::string>& args);
 
         // Hook method executed just after a command dispatch is finished
-        virtual bool post_command(std::string const& input, bool stop)
-        {
-            return stop;
-        }
+        virtual bool post_command(std::vector<std::string> const& args, bool stop);
 
         // Interpret the argument as though it had been typed in response
         // to the prompt
@@ -88,6 +82,7 @@ namespace command_interpreter
         std::vector<std::string> commands() const;
         boost::shared_ptr<command_base> command(std::string const& name) const;
         bool has_command(std::string const& name) const;
+        bool resolve_approximate_command(std::string& name) const;
 
         std::istream& istrm() { return istrm_; }
         std::ostream& ostrm() { return ostrm_; }
