@@ -9,6 +9,7 @@
 #include <hdb/commands/disconnect.hpp>
 #include <hdb/commands/help.hpp>
 #include <hdb/commands/license.hpp>
+#include <hdb/commands/list.hpp>
 #include <hdb/commands/quit.hpp>
 #include <hdb/commands/terminate.hpp>
 
@@ -33,6 +34,7 @@ namespace hpx_debug
         add_command(boost::make_shared<commands::disconnect>());
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));
         add_command(boost::make_shared<commands::license>(boost::ref(*this)));
+        add_command(boost::make_shared<commands::list>(boost::ref(*this)));
         add_command(boost::make_shared<commands::quit>());
         add_command(boost::make_shared<commands::terminate>());
     }
