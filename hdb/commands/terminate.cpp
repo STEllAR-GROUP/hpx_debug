@@ -27,10 +27,10 @@ namespace hpx_debug { namespace commands
             return "terminate the debugged application, exit the debugger";
 
         case command_interpreter::helpmode_command:
-            return "terminate -- terminate the debugged application";
+            return "terminate\n"
+                   "  -- terminate the debugged application";
 
         default:
-        case command_interpreter::helpmode_allcommands:
             break;
         }
         return "";

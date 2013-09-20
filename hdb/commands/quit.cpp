@@ -22,10 +22,10 @@ namespace hpx_debug { namespace commands
             return "exit the debugger";
 
         case command_interpreter::helpmode_command:
-            return "quit -- exit the debugger";
+            return "quit\n"
+                   "  -- exit the debugger";
 
         default:
-        case command_interpreter::helpmode_allcommands:
             break;
         }
         return "";

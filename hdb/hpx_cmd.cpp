@@ -34,7 +34,7 @@ namespace hpx_debug
         add_command(boost::make_shared<commands::disconnect>());
         add_command(boost::make_shared<commands::help>(boost::ref(*this)));
         add_command(boost::make_shared<commands::license>(boost::ref(*this)));
-        add_command(boost::make_shared<commands::list>(boost::ref(*this)));
+        add_command(boost::make_shared<commands::list>(appname, istreamwrap_, ostreamwrap_));
         add_command(boost::make_shared<commands::quit>());
         add_command(boost::make_shared<commands::terminate>());
     }

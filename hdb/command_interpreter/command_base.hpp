@@ -14,8 +14,7 @@ namespace command_interpreter
     enum helpmode
     {
         helpmode_minimal = 0,
-        helpmode_command = 1,
-        helpmode_allcommands = 2
+        helpmode_command = 1
     };
 
     struct command_base
@@ -24,7 +23,7 @@ namespace command_interpreter
 
         virtual std::string get_command_name() const = 0;
 
-        virtual bool pre_call(std::vector<std::string> const& args)
+        virtual bool pre_call(std::vector<std::string>& args, std::size_t index)
         {
             // by default, do no pre_call argument handling
             return false;

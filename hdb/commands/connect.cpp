@@ -103,12 +103,15 @@ namespace hpx_debug { namespace commands
             return "connect to a running HPX application";
 
         case command_interpreter::helpmode_command:
-            return "connect [<locality>] -- connect to an HPX application running on <locality>\n"
-                   "                        where <locality> is hostname[:port] or ipaddress[:port]\n"
-                   "                        (default: 127.0.0.1:7910)";
+            return "connect [<console>] [<locality>]\n"
+                   "  -- connect to an HPX application running on <locality>\n"
+                   "     where: <console>  is hostname[:port] or ipaddress[:port]\n"
+                   "                       of the application to connect to\n"
+                   "                       (default: 127.0.0.1:7910)\n"
+                   "            <locality> is the initial locality to activate\n"
+                   "                       (default: 0)";
 
         default:
-        case command_interpreter::helpmode_allcommands:
             break;
         }
         return "";

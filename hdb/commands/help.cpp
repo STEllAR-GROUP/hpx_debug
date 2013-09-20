@@ -18,24 +18,41 @@ namespace hpx_debug { namespace commands
         return lhs.size() < rhs.size();
     }
 
+    bool help::pre_call(std::vector<std::string>& args, std::size_t index)
+    {
+        if (args.empty() || args[0] == "all") 
+            return false;
+
+        if (!ci_.resolve_approximate_command(args[0]))
+            return false;
+
+        if (!ci_.has_command(args[0]))
+            return false;       // we report the error later
+
+        std::string resolved_command(args[0]);
+        boost::shared_ptr<command_base> c = ci_.command(resolved_command);
+
+        c->pre_call(args, index+1);
+
+        return true;
+    }
+
     bool help::do_call(std::vector<std::string> const& args)
     {
-        BOOST_ASSERT(!args.empty());
-
         std::vector<std::string> command_names(ci_.commands());
         if (command_names.empty())
         {
             throw std::runtime_error("no commands defined");
         }
 
-        if (args.size() == 1 || args[1] == "all") {
+        if (args.empty() || args[0] == "all") {
             // print list of available commands
             std::vector<std::string>::iterator it = std::max_element(
                 command_names.begin(), command_names.end(), max_size);
-        
+
             BOOST_ASSERT(it != command_names.end());
             std::size_t max_length = (*it).size();
-            
+
             ci_.ostrm() << "List of available commands:\n" << std::endl;
 
             BOOST_FOREACH(std::string const& name, command_names)
@@ -44,23 +61,29 @@ namespace hpx_debug { namespace commands
                 std::string help_string = c->do_help(
                     command_interpreter::helpmode_minimal, args);
 
-                ci_.ostrm() << std::left << std::setw(max_length) 
+                ci_.ostrm() << std::left << std::setw(max_length)
                     << name << " -- " << help_string << std::endl;
             }
 
             ci_.ostrm() << "\nType 'help' followed by a command name for "
                 << "full documentation of that command." << std::endl;
         }
-        else {
+        else if (!args.empty()) {
             // print help for given command
-            if (!ci_.has_command(args[1]))
+            std::vector<std::string> arguments(args);
+            std::string resolved_command(args[0]);
+
+            if (!ci_.has_command(resolved_command))
             {
-                throw "can't provide help for unknown command: " + args[1];
+                throw std::runtime_error(
+                    "can't provide help for unknown command: " + resolved_command);
             }
 
-            boost::shared_ptr<command_base> c = ci_.command(args[1]);
+            arguments.erase(arguments.begin());
+            boost::shared_ptr<command_base> c = ci_.command(resolved_command);
+
             std::string help_string = c->do_help(
-                command_interpreter::helpmode_command, args);
+                command_interpreter::helpmode_command, arguments);
 
             ci_.ostrm() << help_string << std::endl;
         }
@@ -73,14 +96,14 @@ namespace hpx_debug { namespace commands
         switch(mode) {
         case command_interpreter::helpmode_minimal:
             return "give short list of all commands";
-    
+
         case command_interpreter::helpmode_command:
-            return "help [<command>] -- give short help for given <command>\n"
-                   "                    where <command> is either 'all' or one of the available\n"
-                   "                    commands (default: give short list of all commands)";
+            return "help [<command>]\n"
+                   "  -- give short help for given <command>\n"
+                   "     where <command>  is either 'all' or one of the available commands\n"
+                   "                      (default: give short list of all commands)";
 
         default:
-        case command_interpreter::helpmode_allcommands:
             break;
         }
         return "";

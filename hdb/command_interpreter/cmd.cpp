@@ -158,8 +158,9 @@ namespace command_interpreter
                 boost::algorithm::is_any_of(" \t"),
                 boost::algorithm::token_compress_on);
 
-            // run all arguments by derived interpreter, resolve possibly
-            // abbreviated command
+            // pre-command: optionally modify the input arguments, possibly
+            // expand abbreviated commands and arguments, return whether
+            // modifications have been made
             bool cmd_is_approx = pre_command(args);
 
             // remove the command from arguments array
@@ -176,7 +177,11 @@ namespace command_interpreter
             // pre-command: optionally modify the input arguments, return
             // whether modifications have been made
             boost::shared_ptr<command_base> c = command(resolved_command);
-            cmd_is_approx |= c->pre_call(args);
+
+            // pre-call: optionally modify the input arguments, possibly
+            // expand abbreviated commands and arguments, return whether
+            // modifications have been made
+            cmd_is_approx |= c->pre_call(args, 0);
 
             // print full command if user specified something abbreviated
             std::string input(inp);

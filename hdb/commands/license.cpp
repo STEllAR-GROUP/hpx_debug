@@ -29,10 +29,10 @@ namespace hpx_debug { namespace commands
             return "print copyright and license for hdb";
 
         case command_interpreter::helpmode_command:
-            return "license -- print copyright and license for hdb";
+            return "license\n"
+                   "  -- print copyright and license for hdb";
 
         default:
-        case command_interpreter::helpmode_allcommands:
             break;
         }
         return "";

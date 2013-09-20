@@ -21,10 +21,10 @@ namespace hpx_debug { namespace commands
             return "disconnect from the HPX application";
 
         case command_interpreter::helpmode_command:
-            return "disconnect -- disconnect from the HPX application";
+            return "disconnect\n"
+                   "  -- disconnect from the HPX application";
 
         default:
-        case command_interpreter::helpmode_allcommands:
             break;
         }
         return "";
