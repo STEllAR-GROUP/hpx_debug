@@ -7,5 +7,6 @@ add_hpx_component(hdb_component
   AUTOGLOB
   HEADER_GLOB "*.h*"
   SOURCE_GLOB "*.c*"
-  FOLDER "hdb/hdb_component")
+  FOLDER "hdb/hdb_component"
+  ESSENTIAL)
 
