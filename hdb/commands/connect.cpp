@@ -62,12 +62,12 @@ namespace hpx_debug { namespace commands
         cfg.push_back("hpx.components.load_external!=0");   // don't load external components
         cfg.push_back("hpx.run_hpx_main!=1");               // don't run hpx_main
 
-        if (args.size() > 1)
+        if (args.size() >= 1)
         {
             std::string address = HPX_INITIAL_IP_ADDRESS;
             boost::uint16_t port = HPX_INITIAL_IP_PORT;
 
-            if (!split_ip_address(args[1], address, port))
+            if (!split_ip_address(args[0], address, port))
             {
                 throw std::runtime_error(
                     "couldn't interpret locality address: " + args[1]);
@@ -76,6 +76,8 @@ namespace hpx_debug { namespace commands
             cfg.push_back("hpx.agas.address!=" + address);
             cfg.push_back("hpx.agas.port!=" +
                 boost::lexical_cast<std::string>(port));
+
+            std::cout << "connecting to " << address << ":" << port << "\n";
         }
 
         // launch HPX
