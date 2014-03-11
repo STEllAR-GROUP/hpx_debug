@@ -26,6 +26,9 @@ HPX_REGISTER_ACTION(
     hdb_component_type::wrapped_type::get_locality_name_action,
     hdb_component_get_locality_name_action);
 
+// We need to register the creat_component_action explicitly as the debugged
+// application was not built using this component. Consequently it lacks the
+// action registration code which is normally generated automatically.
 HPX_REGISTER_ACTION(
     hpx::components::server::create_component_action0<hpx_debug::server::hdb_component>,
     hdb_component_create_component_action);

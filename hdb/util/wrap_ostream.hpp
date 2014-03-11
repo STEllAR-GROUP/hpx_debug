@@ -31,7 +31,7 @@ namespace hdb_debug { namespace util
             p->set_value(ostrm_.rdbuf()->sputn(s, n));
         }
 
-        hpx::lcos::future<std::streamsize> async_write(char const* s, std::streamsize n)
+        hpx::unique_future<std::streamsize> async_write(char const* s, std::streamsize n)
         {
             boost::shared_ptr<hpx::lcos::local::promise<std::streamsize> > p =
                 boost::make_shared<hpx::lcos::local::promise<std::streamsize> >();
@@ -55,7 +55,7 @@ namespace hdb_debug { namespace util
 
         std::streamsize write(char const* s, std::streamsize n)
         {
-            hpx::future<std::streamsize> f = async_write(s, n);
+            hpx::unique_future<std::streamsize> f = async_write(s, n);
             return f.get();
         }
 

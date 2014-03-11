@@ -60,7 +60,7 @@ namespace hpx_debug { namespace commands
     {
         std::vector<std::string> cfg;
         cfg.push_back("hpx.components.load_external!=0");   // don't load external components
-        cfg.push_back("hpx.run_hpx_main!=1");               // don't run hpx_main
+        cfg.push_back("hpx.run_hpx_main!=1");               // run hpx_main
 
         if (args.size() >= 1)
         {

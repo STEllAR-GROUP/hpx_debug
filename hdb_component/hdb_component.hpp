@@ -26,8 +26,8 @@ namespace hpx_debug
 
         /// Create a client side representation for an existing
         /// \a server::hdb_component instance with the given GID.
-        hdb_component(hpx::future<hpx::naming::id_type> const& gid)
-          : base_type(gid)
+        hdb_component(hpx::unique_future<hpx::naming::id_type> && gid)
+          : base_type(gid.share())
         {}
 
         std::string get_locality_name() const

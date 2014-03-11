@@ -55,7 +55,7 @@ namespace hdb_debug { namespace util
             p->set_value(cnt);
         }
 
-        hpx::lcos::future<std::streamsize> async_read(char* s, std::streamsize n)
+        hpx::unique_future<std::streamsize> async_read(char* s, std::streamsize n)
         {
             boost::shared_ptr<hpx::lcos::local::promise<std::streamsize> > p =
                 boost::make_shared<hpx::lcos::local::promise<std::streamsize> >();
@@ -76,7 +76,7 @@ namespace hdb_debug { namespace util
 
         std::streamsize read(char* s, std::streamsize n)
         {
-            hpx::future<std::streamsize> f = async_read(s, n);
+            hpx::unique_future<std::streamsize> f = async_read(s, n);
             return f.get();
         }
 
